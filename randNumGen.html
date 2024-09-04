@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binteger Number Generator</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+  body {
+    background-color: #003e7e;
+    color: white;
+  }
+
+  .container {
+    margin-top: 50px;
+    text-align: center;
+  }
+
+  #generatedNumber {
+    font-size: 54px;
+    margin-top: 20px;
+  }
+
+  #revealedNumber {
+    font-size: 32px;
+    margin-top: 20px;
+  }
+
+  #generatedNumberContainer {
+    margin-top: 50px;
+  }
+
+  .btn-primary {
+    background-color: #ffd200;
+    border-color: #ffd200;
+  }
+
+  .buttonGroup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .buttonGroup .btn {
+    margin: 0 5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Random Number Generator</h1>
+  <div class="form-group">
+    <label for="numberType">Select a Number Type:</label>
+    <select class="form-control" id="numberType">
+      <option value="binary">Random Binary Number</option>
+      <option value="decimal">Random Number (1-255)</option>
+    </select>
+  </div>
+  <div class="buttonGroup">
+    <button id="generateButton" class="btn btn-primary">Generate Number</button>
+    <div class="revealButtonContainer"></div>
+  </div>
+  <div id="generatedNumberContainer">
+    <p id="generatedNumber" class="mt-3"></p>
+    <p id="revealedNumber" class="mt-3"></p>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const generateButton = document.getElementById("generateButton");
+  const numberTypeSelect = document.getElementById("numberType");
+  const generatedNumberDisplay = document.getElementById("generatedNumber");
+  const revealedNumberDisplay = document.getElementById("revealedNumber");
+  const revealButtonContainer = document.querySelector(".revealButtonContainer");
+
+  let generatedNumber = ""; // Store generated number
+
+  generateButton.addEventListener("click", function() {
+    const selectedOption = numberTypeSelect.value;
+
+    if (selectedOption === "binary") {
+      generatedNumber = generateRandomBinaryNumber(8);
+      revealButtonContainer.innerHTML = `
+        <button class="btn btn-primary revealButton" data-option="binary">Reveal Integer</button>
+      `;
+    } else if (selectedOption === "decimal") {
+      generatedNumber = generateRandomDecimalNumber(1, 255);
+      revealButtonContainer.innerHTML = `
+        <button class="btn btn-primary revealButton" data-option="decimal">Reveal Binary</button>
+      `;
+    }
+
+    generatedNumberDisplay.textContent = `Generated: ${generatedNumber}`;
+    revealedNumberDisplay.textContent = ""; // Clear previous revealed number
+
+    const revealButtons = document.querySelectorAll(".revealButton");
+    revealButtons.forEach(button => {
+      button.addEventListener("click", function() {
+        const option = button.getAttribute("data-option");
+        if (option === "binary") {
+          revealedNumberDisplay.textContent = `Solution: ${parseInt(generatedNumber, 2)}`;
+        } else if (option === "decimal") {
+          revealedNumberDisplay.textContent = `Solution: ${generateBinaryFromDecimal(generatedNumber)}`;
+        }
+      });
+    });
+  });
+
+  function generateRandomBinaryNumber(bits) {
+    let binary = "";
+    for (let i = 0; i < bits; i++) {
+      binary += Math.round(Math.random());
+    }
+    return binary.padStart(8, '0');
+  }
+
+  function generateRandomDecimalNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function generateBinaryFromDecimal(decimalNumber) {
+    return decimalNumber.toString(2).padStart(8, '0');
+  }
+});
+</script>
+
+</body>
+</html>
